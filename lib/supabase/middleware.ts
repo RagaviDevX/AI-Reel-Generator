@@ -4,6 +4,17 @@ import { NextResponse, type NextRequest } from "next/server";
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
 export async function updateSession(request: NextRequest) {
+  // Supabase sometimes redirects OAuth to Site URL (/) with ?code= — forward to callback
+  const authCode = request.nextUrl.searchParams.get("code");
+  if (
+    authCode &&
+    !request.nextUrl.pathname.startsWith("/auth/callback")
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

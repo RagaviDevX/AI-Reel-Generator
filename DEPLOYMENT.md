@@ -20,15 +20,27 @@ git push -u origin main
 1. [supabase.com/dashboard](https://supabase.com/dashboard) → New project
 2. **SQL Editor** → paste & run `supabase/schema.sql`
 
-### Auth URLs (replace with your Vercel URL after deploy)
+### Auth URLs (critical for Google login)
+**Authentication → URL Configuration**
+
 | Setting | Value |
 |---------|--------|
-| Site URL | `https://YOUR-APP.vercel.app` |
-| Redirect URLs | `https://YOUR-APP.vercel.app/auth/callback` |
+| Site URL | Your main app URL (Vercel **or** `http://localhost:3000` for local only) |
+| Redirect URLs | Must include **`/auth/callback`** — add every URL you use |
 
-For local dev also add:
-- `http://localhost:3000`
-- `http://localhost:3000/auth/callback`
+**Production (Vercel):**
+```
+https://YOUR-APP.vercel.app
+https://YOUR-APP.vercel.app/auth/callback
+```
+
+**Local dev:**
+```
+http://localhost:3000
+http://localhost:3000/auth/callback
+```
+
+If Google sends you to `http://localhost:3000/?code=...` while using Vercel, your Supabase **Site URL** is still set to localhost — change it to your Vercel URL and redeploy.
 
 ### Google OAuth (optional)
 1. [Google Cloud Console](https://console.cloud.google.com) → Credentials → OAuth 2.0 Client
