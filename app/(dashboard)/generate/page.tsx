@@ -30,28 +30,53 @@ export default function GeneratePage() {
         body: JSON.stringify(input),
       });
 
-      const json = await res.json();
+      let json: {
+        error?: string;
+        data?: ReelGenerationOutput;
+        reelId?: string | null;
+        warning?: string;
+      };
+
+      try {
+        json = await res.json();
+      } catch {
+        throw new Error(
+          res.status === 504
+            ? "Request timed out. Redeploy on Vercel after adding GROQ_API_KEY."
+            : `Server error (${res.status}). Check Vercel logs.`
+        );
+      }
 
       if (!res.ok) {
         throw new Error(
           typeof json.error === "string"
             ? json.error
-            : "Generation failed. Check your API keys."
+            : "Generation failed. Check GROQ_API_KEY in Vercel."
         );
       }
 
+      if (!json.data) {
+        throw new Error("No content returned from AI.");
+      }
+
       setOutput(json.data);
-      setReelId(json.reelId);
+      setReelId(json.reelId ?? null);
       setIsSaved(false);
       toast({
         title: "Reel generated!",
-        description: "Your viral content package is ready.",
-        variant: "success",
+        description: json.warning ?? "Your viral content package is ready.",
+        variant: json.warning ? "default" : "success",
       });
     } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Try again";
+      const isNetwork =
+        message.includes("fetch") || message.includes("Connection");
       toast({
         title: "Generation failed",
-        description: err instanceof Error ? err.message : "Try again",
+        description: isNetwork
+          ? "Could not reach the server. Check GROQ_API_KEY in Vercel → Environment Variables, redeploy, then try again."
+          : message,
         variant: "destructive",
       });
     } finally {
