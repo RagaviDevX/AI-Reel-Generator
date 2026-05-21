@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { TRENDING_IDEAS } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SetupBanner } from "@/components/dashboard/setup-banner";
 
 export const metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
@@ -20,6 +21,7 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
+  let dbReady = true;
   let recent: Awaited<ReturnType<typeof getRecentGenerations>> = [];
   let analytics = {
     totalGenerations: 0,
@@ -31,10 +33,16 @@ export default async function DashboardPage() {
   };
 
   try {
+    const { error: tableCheck } = await supabase
+      .from("reel_generations")
+      .select("id")
+      .limit(1);
+    if (tableCheck) dbReady = false;
+
     recent = await getRecentGenerations(supabase, user.id, 6);
     analytics = await getAnalytics(supabase, user.id);
   } catch {
-    // DB may not be set up yet
+    dbReady = false;
   }
 
   const name =
@@ -45,6 +53,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      {!dbReady && <SetupBanner />}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">
