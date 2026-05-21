@@ -32,14 +32,16 @@ export function DashboardConfigError({
                 <div>
                   <p className="font-medium">1. Vercel environment variables</p>
                   <p className="text-muted-foreground mt-1">
-                    Add{" "}
-                    <code className="text-violet-300">NEXT_PUBLIC_SUPABASE_URL</code>
-                    ,{" "}
-                    <code className="text-violet-300">
-                      NEXT_PUBLIC_SUPABASE_ANON_KEY
+                    <code className="text-violet-300">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
+                    ={" "}
+                    <code className="text-violet-300 break-all">
+                      https://zerzxlujdfsjeudeclui.supabase.co
                     </code>
-                    , and <code className="text-violet-300">GROQ_API_KEY</code>{" "}
-                    → Redeploy.
+                    <br />
+                    <code className="text-violet-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>{" "}
+                    = Publishable key from Supabase API Keys
+                    <br />
+                    Then <strong>Redeploy</strong> on Vercel.
                   </p>
                 </div>
               </div>

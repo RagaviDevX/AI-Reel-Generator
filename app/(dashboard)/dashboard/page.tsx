@@ -1,55 +1,80 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sparkles, Bookmark, BarChart3, TrendingUp } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
-import { getRecentGenerations, getAnalytics } from "@/services/reels";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { ReelCard } from "@/components/dashboard/reel-card";
+import { SetupBanner } from "@/components/dashboard/setup-banner";
 import { Button } from "@/components/ui/button";
 import { TRENDING_IDEAS } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SetupBanner } from "@/components/dashboard/setup-banner";
+import { LoadingSpinner } from "@/components/shared/loading-spinner";
+import type { ReelGeneration } from "@/types";
 
-export const metadata = { title: "Dashboard" };
-export const dynamic = "force-dynamic";
-
-export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  let dbReady = true;
-  let recent: Awaited<ReturnType<typeof getRecentGenerations>> = [];
-  let analytics = {
-    totalGenerations: 0,
-    savedReels: 0,
-    favorites: 0,
-    thisWeekGenerations: 0,
-    topNiche: "—",
-    topPlatform: "—",
+interface DashboardData {
+  name: string;
+  dbReady: boolean;
+  recent: ReelGeneration[];
+  analytics: {
+    totalGenerations: number;
+    savedReels: number;
+    favorites: number;
+    thisWeekGenerations: number;
+    topNiche: string;
+    topPlatform: string;
   };
+}
 
-  try {
-    const { error: tableCheck } = await supabase
-      .from("reel_generations")
-      .select("id")
-      .limit(1);
-    if (tableCheck) dbReady = false;
+export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    recent = await getRecentGenerations(supabase, user.id, 6);
-    analytics = await getAnalytics(supabase, user.id);
-  } catch {
-    dbReady = false;
+  useEffect(() => {
+    fetch("/api/dashboard")
+      .then(async (res) => {
+        const json = await res.json();
+        if (!res.ok) {
+          throw new Error(json.error || "Failed to load dashboard");
+        }
+        setData(json);
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "Failed to load");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-24">
+        <LoadingSpinner size="lg" label="Loading dashboard..." />
+      </div>
+    );
   }
 
-  const name =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    user.email?.split("@")[0] ||
-    "Creator";
+  if (error || !data) {
+    return (
+      <div className="glass rounded-2xl p-8 text-center max-w-lg mx-auto">
+        <p className="text-red-400 font-medium mb-2">Could not load dashboard</p>
+        <p className="text-sm text-muted-foreground mb-4">
+          {error ?? "Unknown error"}
+        </p>
+        <p className="text-xs text-muted-foreground mb-6">
+          Run <strong>setup-complete.sql</strong> in Supabase SQL Editor. Check
+          Vercel env: NEXT_PUBLIC_SUPABASE_URL must be{" "}
+          <code className="text-violet-300">https://zerzxlujdfsjeudeclui.supabase.co</code>
+        </p>
+        <Button variant="neon" onClick={() => window.location.reload()}>
+          Try again
+        </Button>
+      </div>
+    );
+  }
+
+  const { name, dbReady, recent, analytics } = data;
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -142,7 +167,7 @@ export default async function DashboardPage() {
             {TRENDING_IDEAS.slice(0, 4).map((idea) => (
               <div
                 key={idea.id}
-                className="rounded-xl bg-white/5 p-3 border border-white/5 hover:border-violet-500/30 transition-colors"
+                className="rounded-xl bg-white/5 p-3 border border-white/5"
               >
                 <p className="font-medium text-sm">{idea.title}</p>
                 <div className="flex gap-2 mt-2">

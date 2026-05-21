@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, Menu, LogOut, User, Settings, CreditCard } from "lucide-react";
@@ -18,24 +18,34 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/utils/cn";
+import { LoadingSpinner } from "@/components/shared/loading-spinner";
 
-interface DashboardHeaderProps {
-  userEmail?: string;
-  userName?: string;
-  avatarUrl?: string;
-  onSearch?: (query: string) => void;
-}
-
-export function DashboardHeader({
-  userEmail,
-  userName,
-  avatarUrl,
-  onSearch,
-}: DashboardHeaderProps) {
+export function DashboardHeader({ onSearch }: { onSearch?: (query: string) => void }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const supabase = createClient();
+  const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState<string | undefined>();
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+      setUserEmail(user.email ?? "");
+      setUserName(
+        (user.user_metadata?.full_name as string) ||
+          (user.user_metadata?.name as string) ||
+          undefined
+      );
+      setAvatarUrl(user.user_metadata?.avatar_url as string | undefined);
+      setLoading(false);
+    });
+  }, [router]);
 
   const initials =
     userName?.slice(0, 2).toUpperCase() ||
@@ -43,6 +53,7 @@ export function DashboardHeader({
     "U";
 
   const handleLogout = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
@@ -76,51 +87,55 @@ export function DashboardHeader({
         >
           <Menu className="h-5 w-5" />
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
-              <Avatar className="h-10 w-10">
-                {avatarUrl && <AvatarImage src={avatarUrl} alt={userName || ""} />}
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <p className="font-medium">{userName || "Creator"}</p>
-              <p className="text-xs text-muted-foreground font-normal truncate">
-                {userEmail}
-              </p>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
-                <User className="h-4 w-4" />
-                Profile
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/billing" className="flex items-center gap-2 cursor-pointer">
-                <CreditCard className="h-4 w-4" />
-                Billing
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="text-red-400 focus:text-red-400 cursor-pointer"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {loading ? (
+          <LoadingSpinner size="sm" />
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+                <Avatar className="h-10 w-10">
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={userName || ""} />}
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <p className="font-medium">{userName || "Creator"}</p>
+                <p className="text-xs text-muted-foreground font-normal truncate">
+                  {userEmail}
+                </p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/billing" className="flex items-center gap-2 cursor-pointer">
+                  <CreditCard className="h-4 w-4" />
+                  Billing
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-400 focus:text-red-400 cursor-pointer"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
       {menuOpen && (
         <div className="lg:hidden absolute top-16 left-0 right-0 p-4 bg-zinc-950 border-b border-white/10">
