@@ -42,8 +42,8 @@ export default async function SavedPage() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {saved.map((reel, i) => (
-            <ReelCard key={reel.id} reel={reel} index={i} />
+          {saved.map((reel) => (
+            <ReelCard key={reel.id} reel={reel} />
           ))}
         </div>
       )}

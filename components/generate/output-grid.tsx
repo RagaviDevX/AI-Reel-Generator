@@ -86,7 +86,6 @@ export function OutputGrid({
             title={section.title}
             icon={section.icon}
             content={section.content as string | string[]}
-            index={i}
             onCopy={handleCopyAll}
             onDownload={i === 0 ? handleDownload : undefined}
             onRegenerate={i === 0 ? onRegenerate : undefined}

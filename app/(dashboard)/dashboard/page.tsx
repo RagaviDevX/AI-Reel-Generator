@@ -102,26 +102,22 @@ export default function DashboardPage() {
           value={analytics.totalGenerations}
           icon={BarChart3}
           trend={`${analytics.thisWeekGenerations} this week`}
-          index={0}
         />
         <StatsCard
           title="Saved Reels"
           value={analytics.savedReels}
           icon={Bookmark}
-          index={1}
         />
         <StatsCard
           title="Favorites"
           value={analytics.favorites}
           icon={TrendingUp}
-          index={2}
         />
         <StatsCard
           title="Top Niche"
           value={analytics.topNiche}
           icon={Sparkles}
           trend={analytics.topPlatform}
-          index={3}
         />
       </div>
 
@@ -149,8 +145,8 @@ export default function DashboardPage() {
             </Card>
           ) : (
             <div className="grid sm:grid-cols-2 gap-4">
-              {recent.map((reel, i) => (
-                <ReelCard key={reel.id} reel={reel} index={i} />
+              {recent.map((reel) => (
+                <ReelCard key={reel.id} reel={reel} />
               ))}
             </div>
           )}

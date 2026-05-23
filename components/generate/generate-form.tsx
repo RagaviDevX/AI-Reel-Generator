@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,11 +42,7 @@ export function GenerateForm({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      <Card className="glass border-white/10">
+      <Card className="glass border-white/10 gpu-layer">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-violet-400" />
@@ -141,6 +136,5 @@ export function GenerateForm({
           </form>
         </CardContent>
       </Card>
-    </motion.div>
   );
 }

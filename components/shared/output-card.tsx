@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { memo, useState } from "react";
 import {
   Copy,
   Download,
@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
 import type { SceneBreakdown } from "@/types";
-import { useState } from "react";
 
 interface OutputCardProps {
   title: string;
@@ -24,10 +23,9 @@ interface OutputCardProps {
   onRegenerate?: () => void;
   onSave?: () => void;
   isSaved?: boolean;
-  index?: number;
 }
 
-export function OutputCard({
+export const OutputCard = memo(function OutputCard({
   title,
   icon: Icon,
   content,
@@ -36,7 +34,6 @@ export function OutputCard({
   onRegenerate,
   onSave,
   isSaved,
-  index = 0,
 }: OutputCardProps) {
   const [saved, setSaved] = useState(isSaved);
   const textContent = Array.isArray(content) ? content.join("\n\n") : content;
@@ -47,15 +44,10 @@ export function OutputCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08 }}
-    >
-      <Card className="glass glass-hover overflow-hidden group">
+      <Card className="glass glass-hover overflow-hidden group gpu-layer">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20 group-hover:neon-glow transition-shadow">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 border border-violet-500/20">
               <Icon className="h-5 w-5 text-violet-400" />
             </div>
             <CardTitle className="text-base">{title}</CardTitle>
@@ -159,6 +151,5 @@ export function OutputCard({
           )}
         </CardContent>
       </Card>
-    </motion.div>
   );
-}
+});

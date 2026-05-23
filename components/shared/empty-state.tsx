@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -23,11 +20,7 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center py-16 px-4 text-center"
-    >
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in-up">
       <div className="flex h-16 w-16 items-center justify-center rounded-2xl glass mb-4">
         <Icon className="h-8 w-8 text-violet-400" />
       </div>
@@ -43,6 +36,6 @@ export function EmptyState({
           {actionLabel}
         </Button>
       )}
-    </motion.div>
+    </div>
   );
 }

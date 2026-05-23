@@ -58,38 +58,32 @@ export default async function AnalyticsPage() {
           title="Total Generations"
           value={analytics.totalGenerations}
           icon={BarChart3}
-          index={0}
         />
         <StatsCard
           title="This Week"
           value={analytics.thisWeekGenerations}
           icon={Calendar}
-          index={1}
         />
         <StatsCard
           title="Saved Reels"
           value={analytics.savedReels}
           icon={Bookmark}
           trend={`${saveRate}% save rate`}
-          index={2}
         />
         <StatsCard
           title="Favorites"
           value={analytics.favorites}
           icon={Heart}
-          index={3}
         />
         <StatsCard
           title="Top Niche"
           value={analytics.topNiche}
           icon={Target}
-          index={4}
         />
         <StatsCard
           title="Top Platform"
           value={capitalize(analytics.topPlatform)}
           icon={Share2}
-          index={5}
         />
       </div>
 

@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { cn } from "@/utils/cn";
 
 interface LoadingSpinnerProps {
@@ -18,16 +15,16 @@ export function LoadingSpinner({
 }: LoadingSpinnerProps) {
   return (
     <div className={cn("flex flex-col items-center gap-3", className)}>
-      <motion.div
+      <div
         className={cn(
-          "rounded-full border-2 border-violet-500/30 border-t-violet-500",
+          "animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500",
           sizes[size]
         )}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        role="status"
+        aria-label={label ?? "Loading"}
       />
       {label && (
-        <p className="text-sm text-muted-foreground animate-pulse">{label}</p>
+        <p className="text-sm text-muted-foreground">{label}</p>
       )}
     </div>
   );

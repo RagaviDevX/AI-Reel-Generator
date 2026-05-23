@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen`}
       >
         <GradientBg />
-        <TooltipProvider>
+        <TooltipProvider delayDuration={200} skipDelayDuration={0}>
           {children}
           <Toaster />
         </TooltipProvider>

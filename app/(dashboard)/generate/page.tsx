@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { GenerateForm } from "@/components/generate/generate-form";
 import { OutputGrid } from "@/components/generate/output-grid";
 import { EmptyState } from "@/components/shared/empty-state";
+import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { Sparkles } from "lucide-react";
 import type { GenerateReelInput, ReelGenerationOutput } from "@/types";
 import { toast } from "@/hooks/use-toast";
@@ -116,55 +116,32 @@ export default function GeneratePage() {
 
       <GenerateForm onGenerate={handleGenerate} isLoading={isLoading} />
 
-      <AnimatePresence mode="wait">
-        {isLoading && (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="glass rounded-2xl p-12 text-center"
-          >
-            <div className="flex flex-col items-center gap-4">
-              <motion.div
-                className="h-12 w-12 rounded-full border-2 border-violet-500/30 border-t-violet-500"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              />
-              <p className="text-muted-foreground">
-                Crafting your viral reel package...
-              </p>
-            </div>
-          </motion.div>
-        )}
+      {isLoading && (
+        <div className="glass rounded-2xl p-12 text-center">
+          <LoadingSpinner label="Crafting your viral reel package..." />
+        </div>
+      )}
 
-        {output && !isLoading && (
-          <motion.div
-            key="output"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <OutputGrid
-              output={output}
-              topic={topic}
-              reelId={reelId}
-              onRegenerate={handleRegenerate}
-              onSave={handleSave}
-              isSaved={isSaved}
-            />
-          </motion.div>
-        )}
+      {output && !isLoading && (
+        <div className="animate-fade-in-up">
+          <OutputGrid
+            output={output}
+            topic={topic}
+            reelId={reelId}
+            onRegenerate={handleRegenerate}
+            onSave={handleSave}
+            isSaved={isSaved}
+          />
+        </div>
+      )}
 
-        {!output && !isLoading && (
-          <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <EmptyState
-              icon={Sparkles}
-              title="Ready to create?"
-              description="Enter a topic above and let AI generate your complete reel package."
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {!output && !isLoading && (
+        <EmptyState
+          icon={Sparkles}
+          title="Ready to create?"
+          description="Enter a topic above and let AI generate your complete reel package."
+        />
+      )}
     </div>
   );
 }

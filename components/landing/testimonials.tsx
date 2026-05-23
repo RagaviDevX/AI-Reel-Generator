@@ -1,38 +1,25 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { TESTIMONIALS } from "@/lib/constants";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { FadeIn } from "@/components/shared/fade-in";
 
 export function TestimonialsSection() {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 content-auto">
       <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <FadeIn className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
             Loved by creators
           </h2>
           <p className="text-muted-foreground">
             Join thousands shipping viral content faster
           </p>
-        </motion.div>
+        </FadeIn>
         <div className="grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
-            <motion.div
-              key={t.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Card className="glass glass-hover h-full">
+            <FadeIn key={t.id} delay={i * 50}>
+              <Card className="glass glass-hover h-full gpu-layer">
                 <CardContent className="pt-6">
                   <div className="flex gap-1 mb-4">
                     {Array.from({ length: t.rating }).map((_, j) => (
@@ -56,7 +43,7 @@ export function TestimonialsSection() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </FadeIn>
           ))}
         </div>
       </div>

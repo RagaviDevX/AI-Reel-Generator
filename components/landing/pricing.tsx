@@ -1,44 +1,31 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Check } from "lucide-react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { PRICING_PLANS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { FadeIn } from "@/components/shared/fade-in";
 import { cn } from "@/utils/cn";
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8">
+    <section id="pricing" className="py-24 px-4 sm:px-6 lg:px-8 content-auto">
       <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <FadeIn className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
             Simple, transparent pricing
           </h2>
           <p className="text-muted-foreground">
             Start free. Upgrade when you&apos;re ready to scale.
           </p>
-        </motion.div>
+        </FadeIn>
         <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
           {PRICING_PLANS.map((plan, i) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
+            <FadeIn key={plan.id} delay={i * 60}>
               <Card
                 className={cn(
-                  "glass h-full relative",
-                  plan.popular && "border-violet-500/50 neon-glow"
+                  "glass h-full relative gpu-layer",
+                  plan.popular && "border-violet-500/50 md:neon-glow"
                 )}
               >
                 {plan.popular && (
@@ -52,12 +39,8 @@ export function PricingSection() {
                 <CardHeader className="text-center pt-8">
                   <CardTitle>{plan.name}</CardTitle>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold">
-                      ${plan.price}
-                    </span>
-                    <span className="text-muted-foreground">
-                      /{plan.interval}
-                    </span>
+                    <span className="text-4xl font-bold">${plan.price}</span>
+                    <span className="text-muted-foreground">/{plan.interval}</span>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -74,13 +57,13 @@ export function PricingSection() {
                     className="w-full"
                     asChild
                   >
-                    <Link href="/signup">
+                    <Link href="/signup" prefetch>
                       {plan.price === 0 ? "Get Started" : "Upgrade"}
                     </Link>
                   </Button>
                 </CardContent>
               </Card>
-            </motion.div>
+            </FadeIn>
           ))}
         </div>
       </div>

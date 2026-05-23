@@ -60,7 +60,7 @@ export function DashboardHeader({ onSearch }: { onSearch?: (query: string) => vo
   };
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-white/10 bg-black/60 backdrop-blur-xl px-4 sm:px-6">
+    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-white/10 bg-black/80 backdrop-blur-md px-4 sm:px-6">
       <div className="lg:hidden">
         <Logo showText={false} />
       </div>
